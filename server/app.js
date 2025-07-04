@@ -7,10 +7,12 @@ const MongoStore= require("connect-mongo");//express-sessionが作成したセ�
 const cookieParser = require('cookie-parser');
 
 
+
 console.log("mongouriの値",process.env.MONGO_URI);
 console.log('セッションシークレット:', process.env.SESSION_SECRET);
 
 const app = express();
+app.use(cookieParser());
 //ミドルウェア
 app.use(cors({
   origin:"http://localhost:5173",//フロントエンドのURLを許可
@@ -35,7 +37,7 @@ app.use(session({
 }));
 
 
-app.use(cookieParser());
+
 app.use((req, res, next) => {
   console.log('--- 新しいリクエスト ---');
   console.log('URL:', req.originalUrl);

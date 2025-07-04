@@ -2,6 +2,7 @@ const express = require("express");
 const router= express.Router();
 const User = require("../models/User");
 
+
 //新規ユーザーの登録を行う
 router.post("/register",async (req,res)=>{
   try{
@@ -70,6 +71,26 @@ router.post("/logout",(req,res)=>{
     res.clearCookie("connect.sid");
     res.status(200).json({message:"ログアウトに成功しました"});
   });
+});
+
+const isAuthenticated=(req,res,next)=>{
+  if(req.session.userId){
+    next();
+  }else{
+    res.status(401).json({message:"認証されていません"});
+  }
+};
+//現在のログインユーザー情報を取得する
+router.get("/me",isAuthenticated,async(req,res)=>{
+  try{
+    const user=await User.findById(req.session.userId).select("-password");
+    if(!user){
+      return res.status(404).json({message:"ユーザーが見つかりません"});
+    }
+    res.json(user);
+  }catch(err){
+    res.status(500).json({message:"サーバーエラー"});
+  }
 });
 
 module.exports=router;

@@ -7,17 +7,19 @@ const HomePage=()=>{
   //Reduxストアからtodosスライスの状態を取得する
   const [newTodoTitle,setNewTodoTitle]=useState("");
 
-
-  const { todos,status,error}=useSelector((state)=>state.todos);
   //認証スライスからユーザー情報も取得
-  const {user}=useSelector((state)=>state.auth);
+  const {user,status: authStatus}=useSelector((state)=>state.auth);
+  
+  //todoスライスからtodoの情報も取得
+  const {todos, status: todoStatus, error}=useSelector((state)=>state.todos);
+  
   //コンポーネントが最初に表示されたときに一度だけ実行する
   useEffect(()=>{
     //ログインしている場合にtodoを実行する
-    if(user){
+    if(authStatus==="succeeded"&&user){
       dispatch(fetchTodos());
     }
-  },[dispatch,user]);//dispatchとuserが変更されたときに再実行
+  },[dispatch,user,authStatus]);//dispatchとuserが変更されたときに再実行
 
 
   //フォーム送信時の処理を追加する
@@ -49,11 +51,11 @@ const HomePage=()=>{
       </form>
       
       {/* {ローディング中ならスピナーを表示する} */}
-      {status==="loading"&&<p>読み込み中...</p>}
+      {todoStatus==="loading"&&<p>読み込み中...</p>}
       {/* {エラーが発生したときにエラーメッセージを表示する} */}
-      {status==="failed"&&<p>エラー...:{error}</p>}
+      {todoStatus==="failed"&&<p>エラー...:{error}</p>}
       {/* {ローディング中ならエラーでもなくtodoの数が0個なら「タスクがありません」と表示} */}
-      {status!=="loading"&&status!=="failed"&&todos.length===0&&(
+      {todoStatus!=="loading"&&todoStatus!=="failed"&&todos.length===0&&(
         <p>タスクがまだありません。新しいタスクを追加しましょう！！</p>
       )}
       

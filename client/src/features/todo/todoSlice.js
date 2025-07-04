@@ -1,5 +1,6 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../../api/axios";
+import { logoutUser } from "../auth/authSlice";
 
 //非同期処理：サーバーからTodoリストを取得する
 export const fetchTodos = createAsyncThunk(
@@ -101,6 +102,11 @@ const todoSlice=createSlice({
         //action.payloadには削除したtodoIdが入っている
         state.todos=state.todos.filter(todo=>todo._id!==action.payload);
       })
+      .addCase(logoutUser.fulfilled,(state)=>{
+        state.todos=[];
+        state.status="idle";
+        state.error=null;
+      });
   },
 });
 

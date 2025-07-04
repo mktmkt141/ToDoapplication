@@ -4,6 +4,20 @@ import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 //createAsyncThunkはAPI通信などの非同期処理を行う。通信中はtrue,通信が成功したらfalseにし成功データをstateに保存。失敗したらfalseに、エラー情報をstateに保存する(ローディング中、成功、失敗)の管理を自動化する。待機中(pending),成功(fullfilled),失敗(rejected)の三つの状態を生む。extraReducersでは、それぞれの状態になった時にstatusやuser,errorのstateをどう変更するかを定義する
 import apiClient from "../../api/axios";
 
+
+//自分の情報を取得するための非同期処理を追加する
+export const fetchCurrentUser = createAsyncThunk(
+  "auth/fetchCurrentUser",
+  async(_,{rejectWithValue})=>{
+    try{
+      const response = await apiClient.get("/users/me");
+      return response.data;
+    }catch(error){
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 //非同期処理(API通信)の定義
 //ユーザー新規登録
 export const registerUser=createAsyncThunk(
@@ -86,6 +100,17 @@ export const authSlice=createSlice({
       state.user=null;
       state.status="idle";
       state.error=null;
+    })
+    // .addCase(fetchCurrentUser.pending,(state)=>{
+    //   state.status="loading";
+    // })
+    .addCase(fetchCurrentUser.fulfilled,(state,action)=>{
+      state.status="succeeded";
+      state.user=action.payload;
+    })
+    .addCase(fetchCurrentUser.rejected,(state)=>{
+      state.status="idle";
+      state.user=null;
     });
   },
 });
