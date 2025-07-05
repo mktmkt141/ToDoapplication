@@ -7,6 +7,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { useEffect } from 'react';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
   // Reduxストアからauthスライスの状態を取得
@@ -45,7 +47,7 @@ function App() {
       <hr />
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>

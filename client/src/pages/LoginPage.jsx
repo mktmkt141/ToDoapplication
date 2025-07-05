@@ -14,7 +14,15 @@ const LoginPage=()=>{
   const navigate=useNavigate();
 
   //Reduxストアから認証関連のstateを取得
-  const { status}=useSelector((state)=>state.auth);
+  const { user,status,error}=useSelector((state)=>state.auth);
+
+  //userが存在するなら、ホームページにリダイレクト
+  useEffect(()=>{
+    //リダイレクト
+    if(user){
+      navigate("/");
+    }
+  },[user,navigate]);
 
   const handleChange=(e)=>{
     setFormData({...formData,[e.target.name]:e.target.value});

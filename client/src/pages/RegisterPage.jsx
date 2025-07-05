@@ -13,7 +13,13 @@ const RegisterPage=()=>{
   const navigate=useNavigate();
 
   //Reduxのストアから認証関連のstateを取得する
-  const {status}=useSelector((state)=>state.auth);
+  const {user,status}=useSelector((state)=>state.auth);
+
+  useEffect(()=>{
+    if(user){
+      navigate("/");
+    }
+  },[user,navigate]);
   
   //入力値が変わった時にstateを更新するための関数
   const handleChange=(e)=>{
