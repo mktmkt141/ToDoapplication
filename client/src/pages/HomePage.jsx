@@ -5,7 +5,14 @@ import { fetchTodos,addTodo,toggleTodo,deleteTodo } from "../features/todo/todoS
 const HomePage=()=>{
   const dispatch=useDispatch();
   //Reduxストアからtodosスライスの状態を取得する
-  const [newTodoTitle,setNewTodoTitle]=useState("");
+
+  //stateをオブジェクトで管理するように変更する
+  const [newTodo,setNewTodo]=useState({
+    title:"",
+    description:"",
+    dueDate:"",
+    priority:"低",//デフォルト
+  });
 
   //認証スライスからユーザー情報も取得
   const {user,status: authStatus}=useSelector((state)=>state.auth);
@@ -22,12 +29,25 @@ const HomePage=()=>{
   },[dispatch,user,authStatus]);//dispatchとuserが変更されたときに再実行
 
 
+  const handleChange=(e)=>{
+    setNewTodo({
+      ...newTodo,
+      [e.target.name]:e.target.value,
+    });
+  };
+
+
   //フォーム送信時の処理を追加する
   const handleAddTodo=(e)=>{
     e.preventDefault();
-    if(newTodoTitle.trim()==="")return;//空の時は何もしない
-    dispatch(addTodo({title:newTodoTitle}));
-    setNewTodoTitle("");//送信後、入力欄を空にする
+    if(newTodo.title.trim()==="")return;//空の時は何もしない
+    dispatch(addTodo(newTodo));
+    setNewTodo({
+      title:"",
+      description:"",
+      dueDate:"",
+      priority:"低",
+    });//送信後、入力欄を空にする
   };
   //チェックボックスがクリックされたときの処理を追加
   const handleToggle=(todo)=>{
@@ -44,10 +64,52 @@ const HomePage=()=>{
   return (
     <div>
       <h2>{user ? `${user.name}さんのTodoリスト`:"Todoリスト"}</h2>
-
       <form onSubmit={handleAddTodo}>
-        <input type="text" value={newTodoTitle} onChange={(e)=>setNewTodoTitle(e.target.value)} placeholder="新しいタスクを追加"></input>
+        <div>
+          <label>タイトル:</label>
+          <input 
+            type="text"
+            name="title"
+            value={newTodo.title}
+            onChange={handleChange}
+            placeholder="新しいタスクのタイトル"
+            required
+           />
+        </div>
+
+        <div>
+          <label>詳細:</label>
+          <textarea 
+            name="description"
+            value={newTodo.description}
+            onChange={handleChange}
+            placeholder="タスクの詳細"
+            required
+           />
+        </div>
+
+        <div>
+          <label>期日:</label>
+          <input 
+            type="date"
+            name="dueDate"
+            value={newTodo.dueDate}
+            onChange={handleChange}
+           />
+        </div>
+
+        <div>
+          <label>優先度:</label>
+          <select
+            name="priority"
+            value={newTodo.priority}
+            onChange={handleChange}>
+            <option value="低">低</option>
+            <option value="高">高</option>
+           </select>
+        </div>
         <button type="submit">追加</button>
+        
       </form>
       
       {/* {ローディング中ならスピナーを表示する} */}

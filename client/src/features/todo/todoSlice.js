@@ -18,9 +18,9 @@ export const fetchTodos = createAsyncThunk(
 //新しいタスクを追加する非同期処理
 export const addTodo = createAsyncThunk(
   "todos/addTodo",
-  async(taskData,{rejectWithValue})=>{
+  async(newTodoData,{rejectWithValue})=>{
     try{
-      const response = await apiClient.post("/todos",taskData);
+      const response = await apiClient.post("/todos",newTodoData);
       return response.data;
     }catch(error){
       return rejectWithValue(error.response.data);

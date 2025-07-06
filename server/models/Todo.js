@@ -15,7 +15,7 @@ const todoSchema=new Schema({
     type:String,
     required:false,
   },
-  dueData:{
+  dueDate:{
     type:Date,
     required:false,
   },
