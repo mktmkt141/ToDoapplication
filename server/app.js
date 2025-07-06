@@ -38,14 +38,14 @@ app.use(session({
 
 
 
-app.use((req, res, next) => {
-  console.log('--- 新しいリクエスト ---');
-  console.log('URL:', req.originalUrl);
-  console.log('Cookies:', req.cookies);
-  console.log('Session:', req.session);
-  console.log('----------------------');
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('--- 新しいリクエスト ---');
+//   console.log('URL:', req.originalUrl);
+//   console.log('Cookies:', req.cookies);
+//   console.log('Session:', req.session);
+//   console.log('----------------------');
+//   next();
+// });
 
 //もし/api/todosから始まるリクエストが来たら、その処理は全部todoRoute(routes/todos.js)に任せる
 const todoRoutes= require("./routes/todos");

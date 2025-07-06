@@ -84,7 +84,7 @@ const HomePage=()=>{
             value={newTodo.description}
             onChange={handleChange}
             placeholder="タスクの詳細"
-            required
+           
            />
         </div>
 
@@ -124,15 +124,28 @@ const HomePage=()=>{
       {todos.length>0&&(
         <ul>
           {todos.map((todo)=>(
-            <li key={todo._id}>
+            <li key={todo._id} style={{border:"1px solid #ccc",margin:"10px",padding:"10px"}}>
               {/* <input 
                 type="checkbox"
                 checked={todo.completed}
                 onChange={()=>handleToggle(todo)}
                /> */}
-               <span style={{textDecoration:todo.completed ? "line-through" : "none"}}>
+               <span style={{
+                textDecoration:todo.completed ? "line-through" : "none",
+                fontWeight:"bold",
+                fontSize:"1.2em",
+               }}>
                 {todo.title}
                </span>
+               <p>優先度:{todo.priority}</p>
+
+               {/* descriptionがある場合のみ表示する */}
+               {todo.description&&<p>詳細:{todo.description}</p>}
+
+               {/* dueDateが存在するときのみ見やすい形式で表示する */}
+               {todo.dueDate&&(
+                <p>期日:{new Date(todo.dueDate).toLocaleDateString()}</p>
+               )}
 
                <button onClick={()=>handleDelete(todo._id)}>削除</button>
               

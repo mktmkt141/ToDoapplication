@@ -26,11 +26,11 @@ router.get("/",isAuthenticated,async(req,res)=>{
 
 router.post("/",isAuthenticated,async(req,res)=>{
   try{
-    const{title,description,dueData,priority}=req.body;
+    const{title,description,dueDate,priority}=req.body;
     const newTodo=new Todo({
       title,
       description,
-      dueData,
+      dueDate,
       priority,
       user:req.session.userId//ログイン中のユーザーのIDを紐づける
     });
