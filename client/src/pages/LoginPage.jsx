@@ -1,7 +1,9 @@
 import React,{useState,useEffect} from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link as RouterLink } from "react-router-dom";
 import { useDispatch,useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
+
+import { Button,TextField,Container,Typography,Box,Link} from "@mui/material";
 
 const LoginPage=()=>{
   const [formData,setFormData]=useState({
@@ -14,7 +16,7 @@ const LoginPage=()=>{
   const navigate=useNavigate();
 
   //Reduxストアから認証関連のstateを取得
-  const { user,status,error}=useSelector((state)=>state.auth);
+  const { user,status}=useSelector((state)=>state.auth);
 
   //userが存在するなら、ホームページにリダイレクト
   useEffect(()=>{
@@ -44,34 +46,61 @@ const LoginPage=()=>{
   };
   
   return (
-    <div>
-      <h2>ログイン</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">メールアドレス:</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            value={formData.email} 
-            onChange={handleChange} 
+    <Container component="main" maxWidth="xs">
+      <Box
+       sx={{
+        marginTop:8,
+        display:"flex",
+        flexDirection:"column",
+        alignItems:"center",
+       }}>
+
+        <Typography component="h1" variant="h5">
+          ログイン
+        </Typography>
+
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt:1}}>
+          <TextField
+            margin="normal"
             required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">パスワード:</label>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            value={formData.password} 
-            onChange={handleChange} 
-            required
-          />
-        </div>
-        <button type="submit" disabled={status==="loading"}>{status==="loading"?"ログイン中...":"ログイン"}</button>
-      </form>
-    </div>
+            fullWidth
+            id="email"
+            label="メールアドレス"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={formData.email}
+            onChange={handleChange}
+           />
+
+           <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="パスワード"
+              type="password"
+              id="password"
+              autoComplete="email"
+              value={formData.password}
+              onChange={handleChange}
+           />
+           <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{mt:3,mb:2}}
+              disabled={status==="loading"}
+            >
+              {status==="loading"?"ログイン中...":"ログイン"}
+            </Button>
+
+            <Link component={RouterLink} to="/register" variant="body2">
+              アカウントをお持ちではない方はこちら 新規登録
+            </Link>
+        </Box>
+       </Box>
+       </Container>
   );
 };
 

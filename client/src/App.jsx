@@ -2,7 +2,7 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'; // Reduxのフックをインポート
 import { fetchCurrentUser, logoutUser } from './features/auth/authSlice'; // logoutアクションをインポート
 import './App.css';
-
+import { Button,Box } from '@mui/material';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -32,18 +32,30 @@ function App() {
   return (
     <div>
       <h1>Todo App</h1>
-      <nav>
-        {/* ★★★ userが存在するかどうかで表示を切り替える ★★★ */}
+      <Box 
+        component="nav" 
+        sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between' 
+        }}
+      >
         {user ? (
           <>
-            <span>こんにちは、{user.name}さん</span> | <button onClick={handleLogout}>ログアウト</button>
+            <span>こんにちは、{user.name}さん</span>
+            <Button 
+              variant="outlined" 
+              size="small" 
+              color="inherit" 
+              onClick={handleLogout}
+            >
+              ログアウト
+            </Button>
           </>
         ) : (
-          <>
-            <Link to="/login">ログイン</Link> | <Link to="/register">新規登録</Link>
-          </>
+          null
         )}
-      </nav>
+      </Box>
       <hr />
 
       <Routes>

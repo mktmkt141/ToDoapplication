@@ -1,8 +1,9 @@
 import React,{useEffect, useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link as RouterLink } from "react-router-dom";
 import { useDispatch,useSelector } from "react-redux";
 import { registerUser } from "../features/auth/authSlice";
+import { Button, TextField, Container, Typography, Box, Link } from '@mui/material';
 
 const RegisterPage=()=>{
   //フォームの値をまとめて管理するためのstate
@@ -45,24 +46,69 @@ const RegisterPage=()=>{
   };
 
   return (
-    <div>
-      <h2>新規登録</h2>
-      <form onSubmit={handlesubmit}>
-        <div>
-          <label htmlFor="name">名前:</label>
-          <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required/>
-        </div>
-        <div>
-          <label htmlFor="email">メールアドレス:</label>
-          <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required/>
-        </div>
-        <div>
-          <label htmlFor="password">パスワード:</label>
-          <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required/>
-        </div>
-        <button type="submit" disabled={status==="loading"}>{status==="loading"? "登録中...":"登録"}</button>
-      </form>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          新規登録
+        </Typography>
+        <Box component="form" onSubmit={handlesubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="名前"
+            name="name"
+            autoComplete="name"
+            autoFocus
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="メールアドレス"
+            name="email"
+            autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="パスワード"
+            type="password"
+            id="password"
+            autoComplete="new-password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={status === 'loading'}
+          >
+            {status === 'loading' ? '登録中...' : '登録'}
+          </Button>
+          <Link component={RouterLink} to="/login" variant="body2">
+            すでにアカウントをお持ちですか？ ログイン
+          </Link>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
