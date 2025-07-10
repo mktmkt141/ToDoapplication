@@ -13,13 +13,13 @@ interface AuthState{
 
 
 //自分の情報を取得するための非同期処理を追加する
-export const fetchCurrentUser = createAsyncThunk(
+export const fetchCurrentUser = createAsyncThunk<User>(
   "auth/fetchCurrentUser",
   async(_,{rejectWithValue})=>{
     try{
       const response = await apiClient.get("/users/me");
       return response.data;
-    }catch(error){
+    }catch(error:any){
       return rejectWithValue(error.response.data);
     }
   }
@@ -27,26 +27,26 @@ export const fetchCurrentUser = createAsyncThunk(
 
 //非同期処理(API通信)の定義
 //ユーザー新規登録
-export const registerUser=createAsyncThunk(
+export const registerUser=createAsyncThunk<User,Omit<User,"_id">>(
   "auth/register",//アクションの名前
   async(userData,{rejectWithValue})=>{//コンポーネントからdispatchされるときに渡されるデータが入る
     try{
       const response=await apiClient.post("/users/register",userData);
       return response.data;//成功したらユーザーデータを返す
-    }catch(error){
+    }catch(error:any){
       return rejectWithValue(error.response.data);//(rejectedアクションのpayloadにバックエンドから送られてきたエラー情報が付く)
     }
   }
 );
 
 //ユーザーログイン
-export const loginUser=createAsyncThunk(
+export const loginUser=createAsyncThunk<User,Omit<User,"_id"|"name">>(
   "auth/login",
     async(userData,{rejectWithValue})=>{
       try{
         const response=await apiClient.post("/users/login",userData);
         return response.data;
-      }catch(error){
+      }catch(error:any){
         return rejectWithValue(error.response.data);
       }
     }
@@ -59,7 +59,7 @@ export const logoutUser = createAsyncThunk(
     try{
       await apiClient.post("/users/logout");
       return ;
-    }catch(error){
+    }catch(error:any){
       return rejectWithValue(error.response.data);
     }
   }
@@ -103,7 +103,7 @@ export const authSlice=createSlice({
       state.status="failed";
       state.error=(action.payload as {message:string}).message;
     })
-    .addCase(logoutUser.fulfilled,(state,action)=>{
+    .addCase(logoutUser.fulfilled,(state)=>{
       state.user=null;
       state.status="idle";
       state.error=null;
