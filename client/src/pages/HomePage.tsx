@@ -1,15 +1,24 @@
-import React,{useEffect, useState} from "react";
-import { useSelector,useDispatch } from "react-redux";
+import React,{FC,useEffect, useState,ChangeEvent,FormEvent} from "react";
+import { useAppSelector,useAppDispatch } from "../app/hooks";
 import { fetchTodos,addTodo,toggleTodo,deleteTodo } from "../features/todo/todoSlice";
 import { Container,Typography,Box,TextField,Button,List,ListItem,ListItemText,Checkbox,IconButton} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Todo } from '../types/index';
 
-const HomePage=()=>{
-  const dispatch=useDispatch();
+//フォームの入力用の型を定義する
+interface NewTodoState{
+  title:string;
+  description:string;
+  dueDate:string;
+  priority:"高"|"低";
+}
+
+const HomePage:FC=()=>{
+  const dispatch=useAppDispatch();
   //Reduxストアからtodosスライスの状態を取得する
 
   //stateをオブジェクトで管理するように変更する
-  const [newTodo,setNewTodo]=useState({
+  const [newTodo,setNewTodo]=useState<NewTodoState>({
     title:"",
     description:"",
     dueDate:"",
@@ -17,10 +26,10 @@ const HomePage=()=>{
   });
 
   //認証スライスからユーザー情報も取得
-  const {user,status: authStatus}=useSelector((state)=>state.auth);
+  const {user,status: authStatus}=useAppSelector((state)=>state.auth);
   
   //todoスライスからtodoの情報も取得
-  const {todos, status: todoStatus, error}=useSelector((state)=>state.todos);
+  const {todos, status: todoStatus, error}=useAppSelector((state)=>state.todos);
   
   //コンポーネントが最初に表示されたときに一度だけ実行する
   useEffect(()=>{
@@ -31,7 +40,8 @@ const HomePage=()=>{
   },[dispatch,user,authStatus]);//dispatchとuserが変更されたときに再実行
 
 
-  const handleChange=(e)=>{
+  //イベントオブジェクトに型を付ける
+  const handleChange=(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=>{
     setNewTodo({
       ...newTodo,
       [e.target.name]:e.target.value,
@@ -40,7 +50,8 @@ const HomePage=()=>{
 
 
   //フォーム送信時の処理を追加する
-  const handleAddTodo=(e)=>{
+  //イベントオブジェクトに型を付ける
+  const handleAddTodo=(e: FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     if(newTodo.title.trim()==="")return;//空の時は何もしない
     dispatch(addTodo(newTodo));
@@ -52,12 +63,13 @@ const HomePage=()=>{
     });//送信後、入力欄を空にする
   };
   //チェックボックスがクリックされたときの処理を追加
-  const handleToggle=(todo)=>{
+
+  const handleToggle=(todo: Todo)=>{
     dispatch(toggleTodo(todo));
   };
 
   //削除ボタンがクリックされたときの処理を追加する
-  const handleDelete=(todoId)=>{
+  const handleDelete=(todoId:string)=>{
     if(window.confirm("このタスクを削除しますか？")){
       dispatch(deleteTodo(todoId));
     }

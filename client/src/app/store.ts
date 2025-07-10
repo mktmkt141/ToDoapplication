@@ -9,3 +9,8 @@ export const store = configureStore({
     todos:todoReducer,//todoという名前で登録する
   },
 });
+
+//ストア全体のstateの型をエクスポート
+export type RootState = ReturnType<typeof store.getState>;
+//dispatch関数の型をエクスポート
+export type AppDispatch = typeof store.dispatch;

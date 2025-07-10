@@ -3,6 +3,13 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 //createAsyncThunkはAPI通信などの非同期処理を行う。通信中はtrue,通信が成功したらfalseにし成功データをstateに保存。失敗したらfalseに、エラー情報をstateに保存する(ローディング中、成功、失敗)の管理を自動化する。待機中(pending),成功(fullfilled),失敗(rejected)の三つの状態を生む。extraReducersでは、それぞれの状態になった時にstatusやuser,errorのstateをどう変更するかを定義する
 import apiClient from "../../api/axios";
+import {User}from "../../types";
+
+interface AuthState{
+  user:User|null;
+  status:"idle"| "loading"| "succeeded" | "failed";
+  error:string|null;
+}
 
 
 //自分の情報を取得するための非同期処理を追加する
@@ -58,7 +65,7 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-const initialState = {
+const initialState :AuthState= {
   user: null,
   status: "idle",
   error: null,
@@ -82,7 +89,7 @@ export const authSlice=createSlice({
     })
     .addCase(registerUser.rejected,(state,action)=>{
       state.status="failed";
-      state.error=action.payload.message;
+      state.error=(action.payload as {message:string}).message;
     })
     //loginuserの状態別処理
     .addCase(loginUser.pending,(state)=>{
@@ -94,7 +101,7 @@ export const authSlice=createSlice({
     })
     .addCase(loginUser.rejected,(state,action)=>{
       state.status="failed";
-      state.error=action.payload.message;
+      state.error=(action.payload as {message:string}).message;
     })
     .addCase(logoutUser.fulfilled,(state,action)=>{
       state.user=null;

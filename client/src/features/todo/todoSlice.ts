@@ -1,9 +1,17 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../../api/axios";
+import { Todo } from "../../types";
 import { logoutUser } from "../auth/authSlice";
 
+
+//TodoStateというスライスの状態の形を定義する
+interface TodoState{
+  todos:Todo[];
+  status:"idle"|"loading"|"succeeded"|"failed";
+  error:string|null;
+}
 //非同期処理：サーバーからTodoリストを取得する
-export const fetchTodos = createAsyncThunk(
+export const fetchTodos = createAsyncThunk<Todo[]>(
   "todos/fetchTodos",
   async(_,{rejectWithValue})=>{
     try{
@@ -15,8 +23,12 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
+
+//addTodoが受け取るデータの型を定義する
+type AddTodoPayload=Omit<Todo,"_id"|"user"|"completed"|"createdAt"|"updatedAt">;
+
 //新しいタスクを追加する非同期処理
-export const addTodo = createAsyncThunk(
+export const addTodo = createAsyncThunk<Todo,AddTodoPayload>(
   "todos/addTodo",
   async(newTodoData,{rejectWithValue})=>{
     try{
@@ -29,7 +41,7 @@ export const addTodo = createAsyncThunk(
 );
 
 //タスクの完了状態を切り替える非同期処理を追加
-export const toggleTodo= createAsyncThunk(
+export const toggleTodo= createAsyncThunk<Todo,Todo>(
   "todos/toggleTodo",
   async(todo,{rejectWithValue})=>{
     try{
@@ -42,7 +54,7 @@ export const toggleTodo= createAsyncThunk(
 );
 
 //タスクを削除する非同期処理を追加
-export const deleteTodo = createAsyncThunk(
+export const deleteTodo = createAsyncThunk<string,string>(
   "todos/deleteTodo",
   async(todoId,{rejectWithValue})=>{
     try{
@@ -54,7 +66,7 @@ export const deleteTodo = createAsyncThunk(
   }
 );
 
-const initialState={
+const initialState:TodoState={
   todos:[],
   status:"idle",
   error:null,
@@ -75,7 +87,7 @@ const todoSlice=createSlice({
       })
       .addCase(fetchTodos.rejected,(state,action)=>{
         state.status="failed";
-        state.error=action.payload.message;
+        state.error=(action.payload as{message:string}).message;
       })
 
       //addTodoの三つの状態に対応する処理を追記
@@ -87,7 +99,7 @@ const todoSlice=createSlice({
       })
       .addCase(addTodo.rejected,(state,action)=>{
         console.error("タスクの追加に失敗:",action.payload);
-        state.error=action.payload.message;
+        state.error=(action.payload as {message:string});
       })
 
       //toggleTodoの処理

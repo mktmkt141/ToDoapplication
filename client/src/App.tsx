@@ -1,3 +1,4 @@
+import React,{FC,useEffect} from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'; // Reduxのフックをインポート
 import { fetchCurrentUser, logoutUser } from './features/auth/authSlice'; // logoutアクションをインポート
@@ -6,28 +7,27 @@ import { Button,Box } from '@mui/material';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import { useEffect } from 'react';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useAppSelector,useAppDispatch } from './app/hooks';
 
+const App:FC=()=>{
+  //型付きのフックを取得する
+  const {user,status} = useAppSelector((state)=>state.auth);
+  const dispatch=useAppDispatch();
 
-function App() {
-  // Reduxストアからauthスライスの状態を取得
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate= useNavigate();
-
-  //アプリ起動時に一度だけ実行するuseEffectを追加する
   useEffect(()=>{
     dispatch(fetchCurrentUser());
   },[dispatch]);
 
-  // ログアウトボタンが押されたときの処理
-  const handleLogout = () => {
+  const handleLogout=()=>{
     dispatch(logoutUser());
-    // 必要であれば、ログアウト後にログインページへ飛ばすこともできます
-    // navigate('/login'); // これを使う場合はuseNavigateもインポート
-    // navigate("/login");
   };
+  if(status==="loading"){
+    return <div>アプリケーションを読み込んでいます...</div>
+  }
+
+
+
 
   return (
     <div>
@@ -66,5 +66,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
