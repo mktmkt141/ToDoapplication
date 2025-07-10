@@ -1,28 +1,29 @@
-const express= require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
-const session = require("express-session");//expressでセッション管理を行うためのライブラリ、ログイン状態の維持をする
-const MongoStore= require("connect-mongo");//express-sessionが作成したセッション情報をmongodbデータベースに保存するためのライブラリ、ログイン状態が維持される
-const cookieParser = require('cookie-parser');
+import express,{Express} from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+
+import todoRoutes from "./routes/todos";
+import userRoutes from "./routes/users";
+dotenv.config();
 
 
+const app: Express=express();
 
-console.log("mongouriの値",process.env.MONGO_URI);
-console.log('セッションシークレット:', process.env.SESSION_SECRET);
-
-const app = express();
-app.use(cookieParser());
 //ミドルウェア
 app.use(cors({
   origin:"http://localhost:5173",//フロントエンドのURLを許可
   credentials:true//Cookieの送受信を許可
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 //セッション設定
 app.use(session({
-  secret:process.env.SESSION_SECRET,//セッションIDを署名するための秘密鍵、cookieに保存されるセッションIDが改ざんされていないかを確認するための署名に使われる
+  secret:process.env.SESSION_SECRET as string,//セッションIDを署名するための秘密鍵、cookieに保存されるセッションIDが改ざんされていないかを確認するための署名に使われる
   resave:false,//セッションに変更がない場合も再保存しない、
   saveUninitialized:false,//未初期化のセッションを保存しない
   store:MongoStore.create({//セッションをMongoDBに保存する際のコレクション名、セッション情報をMongoDBのsessionsというコレクションに保存する、サーバの再起動してもログイン状態が維持される
@@ -36,28 +37,16 @@ app.use(session({
   }
 }));
 
-
-
-// app.use((req, res, next) => {
-//   console.log('--- 新しいリクエスト ---');
-//   console.log('URL:', req.originalUrl);
-//   console.log('Cookies:', req.cookies);
-//   console.log('Session:', req.session);
-//   console.log('----------------------');
-//   next();
-// });
-
-//もし/api/todosから始まるリクエストが来たら、その処理は全部todoRoute(routes/todos.js)に任せる
-const todoRoutes= require("./routes/todos");
-const userRoutes= require("./routes/users");
 app.use("/api/todos",todoRoutes);
 app.use("/api/users",userRoutes);
 
 //DBへの接続
 const startserver=async()=>{
+  if(!process.env.MONGO_URI){
+    throw new Error ("MONGO_URI must be defined in .env file");
+  }
   try{
-    const mongoURI=process.env.MONGO_URI;
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("mongodbに正常に接続しました");
 
     const PORT = process.env.PORT;
