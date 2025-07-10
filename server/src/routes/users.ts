@@ -1,20 +1,23 @@
-const express = require("express");
-const router= express.Router();
-const User = require("../models/User");
+import express,{Request,Response,NextFunction} from "express";
+import User,{IUser} from "../models/User";
+import { isAuthenticated } from "../middleware/authmiddleware";
 
+const router=express.Router();
 
 //新規ユーザーの登録を行う
-router.post("/register",async (req,res)=>{
+router.post("/register",async (req:Request,res:Response)=>{
   try{
     const {name,email,password}=req.body;
     //バリデーション：必須項目が入力されているか
     if(!name|| !email || !password){
-      return res.status(400).json({message:"すべての項目を入力してください"});
+      res.status(400).json({message:"すべての項目を入力してください"});
+      return ;
     }
     //ユーザーが既に存在するかを確認
-    const userexist=await User.findOne({email});
-    if(userexist){
-      return res.status(400).json({message:"このメールアドレスは既に使用されています"});
+    const userExists=await User.findOne({email});
+    if(userExists){
+      res.status(400).json({message:"このメールアドレスは既に使用されています"});
+      return;
     }
     const user= new User({name,email,password});
     await user.save();
@@ -33,21 +36,23 @@ router.post("/register",async (req,res)=>{
 });
 
 //ユーザーログイン
-router.post("/login",async (req,res)=>{
+router.post("/login",async (req:Request,res:Response)=>{
   try{
     const {email,password}=req.body;
 
     if(!email|| !password){
-      return res.status(400).json({message:"メールアドレスとパスワードを入力してください"});
+      res.status(400).json({message:"メールアドレスとパスワードを入力してください"});
+      return;
     }
     //ユーザーをメールアドレスで検索(パスワードも取得する)
     const user=await User.findOne({email}).select("+password");
     if(!user|| !(await user.comparePassword(password))){
-      return res.status(401).json({message:"メールアドレスまたはパスワードが無効です"});
+      res.status(401).json({message:"メールアドレスまたはパスワードが無効です"});
+      return;
     }
 
     //セッションにユーザーidを保存
-    req.session.userId=user._id;
+    req.session.userId=String(user._id);
 
     //ログイン成功のレスポンス
     res.status(200).json({
@@ -62,7 +67,7 @@ router.post("/login",async (req,res)=>{
   }
 });
 
-router.post("/logout",(req,res)=>{
+router.post("/logout",(req:Request,res:Response)=>{
   req.session.destroy((err)=>{
     if(err){
       return res.status(500).json({message:"ログアウトに失敗しました"});
@@ -73,24 +78,26 @@ router.post("/logout",(req,res)=>{
   });
 });
 
-const isAuthenticated=(req,res,next)=>{
-  if(req.session.userId){
-    next();
-  }else{
-    res.status(401).json({message:"認証されていません"});
-  }
-};
+// const isAuthenticated=(req,res,next)=>{
+//   if(req.session.userId){
+//     next();
+//   }else{
+//     res.status(401).json({message:"認証されていません"});
+//   }
+// };
 //現在のログインユーザー情報を取得する
-router.get("/me",isAuthenticated,async(req,res)=>{
+router.get("/me",isAuthenticated,async(req:Request,res:Response)=>{
   try{
     const user=await User.findById(req.session.userId).select("-password");
     if(!user){
-      return res.status(404).json({message:"ユーザーが見つかりません"});
+       res.status(404).json({message:"ユーザーが見つかりません"});
+       return;
     }
     res.json(user);
   }catch(err){
+    console.error(err);
     res.status(500).json({message:"サーバーエラー"});
   }
 });
 
-module.exports=router;
+export default router;

@@ -1,78 +1,82 @@
-const express = require("express");
-const router = express.Router();
-const Todo=require("../models/Todo.js");
+import express , {Router,RequestHandler} from "express";
+import Todo from "../models/Todo";
+import { isAuthenticated } from "../middleware/authmiddleware";
 
+const router =express.Router();
+router.use(isAuthenticated);
 
-//ミドルウェアの作成
-const isAuthenticated=(req,res,next)=>{
-  if(req.session.userId){
-    //セッションにuserIDがあれば、ログインしていると判断し、次の処理に進む
-    next();
-  }else{
-    //ログインしていなければ401エラー
-    res.status(401).json({message:"認証されていません、ログインしてください"});
-  }
-};
-
-//APIエンドポイントの設定//
-router.get("/",isAuthenticated,async(req,res)=>{
+//自分のTodoを全て取得する
+const getAllTodos:RequestHandler=async (req,res)=>{
   try{
     const todos=await Todo.find({user:req.session.userId}).sort({createdAt:-1});
     res.json(todos);
   }catch(err){
-    res.status(500).json({message:"サーバーエラー"});
+    res.status(500).json({message:"サーバエラー"});
   }
-});
+};
 
-router.post("/",isAuthenticated,async(req,res)=>{
+//自分のTodoとして新規作成
+const createTodo:RequestHandler=async(req,res)=>{
   try{
-    const{title,description,dueDate,priority}=req.body;
+    const { title,description,dueDate,priority}=req.body;
     const newTodo=new Todo({
       title,
       description,
       dueDate,
       priority,
-      user:req.session.userId//ログイン中のユーザーのIDを紐づける
+      user:req.session.userId
     });
     const savedTodo=await newTodo.save();
     res.status(201).json(savedTodo);
   }catch(err){
-    res.status(500).json({message:"サーバーエラー"});
+    res.status(500).json({message:"サーバエラー"});
   }
-});
+};
 
-//指定したIDのTodoを更新する
-router.put("/:id",async(req,res)=>{
+//自分のTodoを更新
+const updateTodo:RequestHandler=async (req,res)=>{
   try{
-    const todo = await Todo.findById(req.params.id);
-    if(!todo)return res.status(403).json({message:"この操作を行う権限がありません"});
-    //タスクの所有者とログイン中のユーザーが一致するかを確認
-    if(todo.user.toString()!==req.session.userId){
-      return res.status(403).json({message:"この操作を行う権限がありません"});
+    const todo=await Todo.findById(req.params.id);
+    if(!todo){
+      res.status(404).json({message:"タスクが見つかりません"});
+      return ;
     }
-    const updatedTodo= await Todo.findByIdAndUpdate(req.params.id,req.body,{new:true});
+    if(String(todo.user)!==req.session.userId){
+      res.status(403).json({message:"この権限を行う権利がありません"});
+      return ;
+    }
+
+    const updatedTodo=await Todo.findByIdAndUpdate(req.params.id,req.body,{new:true});
     res.json(updatedTodo);
   }catch(err){
     res.status(500).json({message:"サーバエラー"});
   }
-});
+};
 
-//指定したIDのTodoを削除する
-router.delete("/:id",async(req,res)=>{
+//自分のTodoを削除する
+const deleteTodo:RequestHandler=async (req,res)=>{
   try{
     const todo=await Todo.findById(req.params.id);
-    if(!todo)return res.status(404).json({message:"タスクが見つかりません"});
-
-    //タスクの所有者とログイン中のユーザーが位置するかを確認
-    if(todo.user.toString()!==req.session.userId){
-      return res.status(403).json({message:"この操作を行う権限がありません"});
+    if(!todo){
+      res.status(404).json({message:"タスクが見つかりません"});
+      return;
     }
+    if(String(todo.user)!==req.session.userId){
+      res.status(403).json({message:"この操作を行う権限がありません"});
+      return ;
+    }
+
     await Todo.findByIdAndDelete(req.params.id);
     res.json({message:"タスクを削除しました"});
   }catch(err){
     res.status(500).json({message:"サーバエラー"});
   }
-});
+};
 
-module.exports=router;
+router.get("/",getAllTodos);
+router.post("/",createTodo);
+router.put("/:id",updateTodo);
+router.delete("/:id",deleteTodo);
+
+export default router;
 
