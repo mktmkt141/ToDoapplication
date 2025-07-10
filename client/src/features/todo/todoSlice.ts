@@ -99,7 +99,7 @@ const todoSlice=createSlice({
       })
       .addCase(addTodo.rejected,(state,action)=>{
         console.error("タスクの追加に失敗:",action.payload);
-        state.error=(action.payload as {message:string});
+        state.error=(action.payload as {message:string}).message;
       })
 
       //toggleTodoの処理
