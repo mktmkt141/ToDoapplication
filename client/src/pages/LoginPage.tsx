@@ -1,22 +1,20 @@
-import React,{useState,useEffect} from "react";
+import React,{FC,useState,useEffect,FormEvent} from "react";
 import { useNavigate,Link as RouterLink } from "react-router-dom";
-import { useDispatch,useSelector } from "react-redux";
+import { useAppDispatch,useAppSelector } from "../app/hooks";
 import { loginUser } from "../features/auth/authSlice";
-
 import { Button,TextField,Container,Typography,Box,Link} from "@mui/material";
 
-const LoginPage=()=>{
+const LoginPage:FC=()=>{
   const [formData,setFormData]=useState({
     email:"",
     password:"",
   });
-
-  const dispatch=useDispatch();
+  const dispatch=useAppDispatch();
   //ページ遷移のためのフック
   const navigate=useNavigate();
 
   //Reduxストアから認証関連のstateを取得
-  const { user,status}=useSelector((state)=>state.auth);
+  const { user,status}=useAppSelector((state)=>state.auth);
 
   //userが存在するなら、ホームページにリダイレクト
   useEffect(()=>{
@@ -26,23 +24,18 @@ const LoginPage=()=>{
     }
   },[user,navigate]);
 
-  const handleChange=(e)=>{
+  const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     setFormData({...formData,[e.target.name]:e.target.value});
     //e.target.nameはname属性のこと例えば、メールの欄ならemail。e.target.valueは今入力されている最新の値。...はスプレッド構文で、オブジェクトの中身を展開する。[]で囲むと、キー名を変数や式の値で動的に設定できる。例えば、ユーザーがメールアドレスの欄に、「a」と入力したとすると、e.target.nameはemailになり、e.target.valueはaになる。結果、[e.target.name]: e.target.valueの部分は、{ email: 'a' }と解釈される。
   };
 
   //入力欄が変わった時にstateの更新を行う
-  const handleSubmit=async(e)=>{
+  const handleSubmit=async(e: FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     //loginUserアクションをdispatchする
-    try{
-      //dispatchした結果をunwrapで受けとる
-      await dispatch(loginUser(formData)).unwrap();
-      navigate("/");
-    }catch(err){
-      alert(`ログインに失敗しました:${err.message}`);
-      console.error("ログインに失敗:",err);
-    }
+    dispatch(loginUser(formData)).unwrap().catch((err)=>{
+      alert(`ログインに失敗しました:${err.message||"エラーが発生しました"}`);
+    });
   };
   
   return (

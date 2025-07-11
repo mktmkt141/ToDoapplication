@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # 1. バックエンドサービス (todo-server)
+  server:
+    build: ./todo-server
+    container_name: backend-server
+    restart: always
+    ports:
+      - "5000:5000"
+    # .envファイルから環境変数を読み込む
+    env_file:
+      - ./todo-server/.env
+    depends_on:
+      - mongo
+    # 開発用にローカルのソースコードをコンテナに同期させる
+    volumes:
+      - ./todo-server/src:/app/src
+
+  # 2. フロントエンドサービス (todo-client)
+  client:
+    build: ./todo-client
+    container_name: frontend-client
+    restart: always
+    ports:
+      # ホストの5173番ポートを、コンテナの80番ポート（Nginx）に繋ぐ
+      - "5173:80"
+    depends_on:
+      - server
+    # 開発用にローカルのソースコードをコンテナに同期させる
+    volumes:
+      - ./todo-client/src:/app/src
+
+  # 3. データベースサービス (MongoDB)
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    # .envファイルからMongoDBの認証情報を読み込む
+    env_file:
+      - ./todo-server/.env
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

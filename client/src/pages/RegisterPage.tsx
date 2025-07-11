@@ -1,20 +1,19 @@
-import React,{useEffect, useState} from "react";
-import axios from "axios";
+import React,{FC,useEffect, useState,FormEvent} from "react";
 import { useNavigate,Link as RouterLink } from "react-router-dom";
-import { useDispatch,useSelector } from "react-redux";
+import { useAppDispatch,useAppSelector } from "../app/hooks";
 import { registerUser } from "../features/auth/authSlice";
 import { Button, TextField, Container, Typography, Box, Link } from '@mui/material';
 
-const RegisterPage=()=>{
+const RegisterPage:FC=()=>{
   //フォームの値をまとめて管理するためのstate
   const [formData,setFormData]=useState({name:"",email:"",password:"",});
 
   //ページ遷移のためのフックス
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate=useNavigate();
 
   //Reduxのストアから認証関連のstateを取得する
-  const {user,status}=useSelector((state)=>state.auth);
+  const {user,status}=useAppSelector((state)=>state.auth);
 
   useEffect(()=>{
     if(user){
@@ -23,12 +22,12 @@ const RegisterPage=()=>{
   },[user,navigate]);
   
   //入力値が変わった時にstateを更新するための関数
-  const handleChange=(e)=>{
+  const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setFormData({...formData,[e.target.name]: e.target.value,});
   };
 
   //フォームが送信されたときの処理
-  const handlesubmit=async(e)=>{
+  const handlesubmit=async(e: FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     try{
       //dispatchした結果をunwrap()で受け取る
@@ -37,7 +36,7 @@ const RegisterPage=()=>{
       alert("ユーザー登録が成功しました。ログインページに遷移します。");
       navigate("/login");
 
-    }catch(err){
+    }catch(err:any){
       //unwrap()はrejectedアクションの場合にエラーをthrowする。
       //errオブジェクトにはrejectWithValueで渡したpayloadが入っている
       alert(`登録に失敗しました:${err.message}`);

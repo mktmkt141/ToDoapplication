@@ -18,7 +18,7 @@ const ProtectedRoute :FC<ProtectedRouteProps>=({ children})=>{
   },[user,status,navigate]);//userかstatusが変わるたびにチェック
   //ユーザーが存在する場合のみ、子コンポーネントを表示する
   //存在しない場合は何も表示しない
-  return user? <>children</>:null;
+  return user? <>{children}</>:null;
 };
 
 export default ProtectedRoute;
