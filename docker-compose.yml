@@ -3,33 +3,35 @@ version: '3.8'
 services:
   # 1. バックエンドサービス (todo-server)
   server:
-    build: ./todo-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     container_name: backend-server
     restart: always
     ports:
       - "5000:5000"
-    # .envファイルから環境変数を読み込む
     env_file:
-      - ./todo-server/.env
+      - ./server/.env
     depends_on:
       - mongo
-    # 開発用にローカルのソースコードをコンテナに同期させる
     volumes:
-      - ./todo-server/src:/app/src
+      # ローカルのsrcフォルダをコンテナの/app/srcにマウント
+      - ./server/src:/app/src
 
   # 2. フロントエンドサービス (todo-client)
   client:
-    build: ./todo-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     container_name: frontend-client
     restart: always
     ports:
-      # ホストの5173番ポートを、コンテナの80番ポート（Nginx）に繋ぐ
       - "5173:80"
     depends_on:
       - server
-    # 開発用にローカルのソースコードをコンテナに同期させる
     volumes:
-      - ./todo-client/src:/app/src
+      # ローカルのsrcフォルダをコンテナの/app/srcにマウント
+      - ./client/src:/app/src
 
   # 3. データベースサービス (MongoDB)
   mongo:
@@ -38,9 +40,10 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    # .envファイルからMongoDBの認証情報を読み込む
-    env_file:
-      - ./todo-server/.env
+    # MongoDBの管理者ユーザーを環境変数で設定
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
 
