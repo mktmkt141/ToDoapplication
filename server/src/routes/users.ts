@@ -29,7 +29,14 @@ router.post("/register",async (req:Request,res:Response)=>{
       email:user.email,
       message:"ユーザー登録が成功しました"
     });
-  }catch(err){
+  }catch(err:any){
+    if (err.name === 'ValidationError') {
+      // エラーメッセージの中から、最初のエラーメッセージを抽出して返す
+      const messages = Object.values(err.errors).map((e: any) => e.message);
+      res.status(400).json({ message: messages[0] });
+      return;
+    }
+
     console.error(err);
     res.status(500).json({message:"サーバエラーが発生しました"});
   }

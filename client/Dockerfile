@@ -1,24 +1,22 @@
-# --- ステージ1: ビルド環境 ---
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
+# 依存ファイルコピーとインストール
 COPY package*.json ./
 RUN npm install
 
+# ソースコードコピーとビルド
 COPY . .
 RUN npm run build
 
+# ポート番号（Viteのpreviewはデフォルトで4173）
+EXPOSE 4173
 
-# --- ステージ2: 本番環境 ---
-FROM nginx:stable-alpine
+# Viteのpreviewサーバーで静的ファイル配信
+CMD ["npm", "run", "preview", "--", "--host"]
 
-# ビルドステージから完成品（distフォルダの中身）だけをコピー
-COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Nginxは80番ポートで動く
-EXPOSE 80
 
-# Nginxを起動
-CMD ["nginx", "-g", "daemon off;"]
+
 

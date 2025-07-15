@@ -29,6 +29,13 @@ const UserSchema=new Schema<IUser>({
     required:[true,"パスワードは必須です"],
     minlength:6,
     seclet:false,//find()などでユーザー情報を取得したときにデフォルトでパスワードは含まない
+    validate: {
+        validator: function(v: string) {
+          // パスワードが「英字」と「数字」の両方を含むことをチェックする正規表現
+          return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(v);
+        },
+        message: 'パスワードは、6文字以上で、英字と数字の両方を含める必要があります。'
+      }
   },
 
 },{

@@ -41,13 +41,13 @@ export const addTodo = createAsyncThunk<Todo,AddTodoPayload>(
 );
 
 //タスクの完了状態を切り替える非同期処理を追加
-export const toggleTodo= createAsyncThunk<Todo,Todo>(
-  "todos/toggleTodo",
-  async(todo,{rejectWithValue})=>{
+export const updateTodo= createAsyncThunk<Todo,{id:string;data:Partial<Omit<Todo,"_id">>}>(
+  "todos/updateTodo",
+  async({id,data},{rejectWithValue})=>{
     try{
-      const response = await apiClient.put(`/todos/${todo._id}`,{completed:!todo.completed});
+      const response = await apiClient.put(`/todos/${id}`,data);
       return response.data;
-    }catch(error){
+    }catch(error:any){
       return rejectWithValue(error.response.data);
     }
   }
@@ -103,7 +103,7 @@ const todoSlice=createSlice({
       })
 
       //toggleTodoの処理
-      .addCase(toggleTodo.fulfilled,(state,action)=>{
+      .addCase(updateTodo.fulfilled,(state,action)=>{
         const index=state.todos.findIndex(todo=>todo._id===action.payload._id);
         if(index!==-1){
           state.todos[index]=action.payload;//サーバから返ってきた最新データで更新

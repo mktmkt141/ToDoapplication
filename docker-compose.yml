@@ -1,11 +1,7 @@
-version: '3.8'
-
 services:
   # 1. バックエンドサービス (todo-server)
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    build: ./server
     container_name: backend-server
     restart: always
     ports:
@@ -15,23 +11,19 @@ services:
     depends_on:
       - mongo
     volumes:
-      # ローカルのsrcフォルダをコンテナの/app/srcにマウント
-      - ./server/src:/app/src
+      - ./todo-server/src:/app/src
+    
 
   # 2. フロントエンドサービス (todo-client)
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    build: ./client
     container_name: frontend-client
     restart: always
     ports:
-      - "5173:80"
+      - "5173:4173"  # ← Vite preview のデフォルトポートは 4173
     depends_on:
       - server
-    volumes:
-      # ローカルのsrcフォルダをコンテナの/app/srcにマウント
-      - ./client/src:/app/src
+  
 
   # 3. データベースサービス (MongoDB)
   mongo:
@@ -46,6 +38,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
+    tty: true
 
 volumes:
   mongo-data:

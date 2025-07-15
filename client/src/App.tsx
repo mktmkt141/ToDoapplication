@@ -14,13 +14,19 @@ const App:FC=()=>{
   //型付きのフックを取得する
   const {user,status} = useAppSelector((state)=>state.auth);
   const dispatch=useAppDispatch();
+  const navigate=useNavigate();
 
   useEffect(()=>{
     dispatch(fetchCurrentUser());
   },[dispatch]);
 
-  const handleLogout=()=>{
-    dispatch(logoutUser());
+  const handleLogout=async()=>{
+    try{
+      await dispatch(logoutUser());
+      navigate("/login");
+    }catch(err){
+      console.log("ログアウトに失敗しました",err);
+    }
   };
   if(status==="loading"){
     return <div>アプリケーションを読み込んでいます...</div>
