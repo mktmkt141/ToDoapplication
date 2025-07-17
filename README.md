@@ -32,6 +32,9 @@
 * **タスクの追加の様子(優先度の低いタスクは水色に)**
 <img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/cf1f968d-7c87-4a3c-b0be-209853384728" />
 
+* **タスクの編集**
+* **タスクの削除**
+
 ## 主な機能
 
 * **ユーザー認証**: 新規登録、ログイン、ログアウト機能。Cookieセッションによる状態管理。
