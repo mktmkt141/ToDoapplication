@@ -8,6 +8,30 @@
 
 ---
 
+## 画面の様子
+
+* **新規登録画面**
+<img width="1912" height="867" alt="Image" src="https://github.com/user-attachments/assets/1c2bfb01-f3e6-4399-a8cd-1f1ac127e8e7" />
+
+* **ログイン画面**
+<img width="1892" height="862" alt="Image" src="https://github.com/user-attachments/assets/3c4fe45b-0fa0-4e09-985c-b822b938402c" />
+
+* **初期画面(タスクの追加をしていない状態)**
+<img width="1915" height="867" alt="Image" src="https://github.com/user-attachments/assets/9e04c584-e5c7-40f3-b8d2-7f7640733ce8" />
+
+* **タスクの追加において、期限の設定をするための手段**
+<img width="1914" height="870" alt="Image" src="https://github.com/user-attachments/assets/5acac256-9c73-4f3e-992d-59e50a44aea5" />
+
+* **優先度の設定の様子**
+<img width="1254" height="501" alt="Image" src="https://github.com/user-attachments/assets/a40671a2-3677-45cb-a565-5ed40fc8545d" />
+
+* **タスクの追加の様子(優先度の高いタスクは赤色に)**
+<img width="1916" height="870" alt="Image" src="https://github.com/user-attachments/assets/a857118d-4781-48a5-8906-dedf0670cfa5" /><br>
+タスクは新しく追加したタスクから上に載っていく<br>
+
+* **タスクの追加の様子(優先度の低いタスクは水色に)**
+<img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/cf1f968d-7c87-4a3c-b0be-209853384728" />
+
 ## 主な機能
 
 * **ユーザー認証**: 新規登録、ログイン、ログアウト機能。Cookieセッションによる状態管理。
