@@ -106,7 +106,14 @@ apiClientはwithCredentials:trueと設定しているため、この時にブラ
   
 次に、app.tsでセッション管理のルールを定義した。以下のオプションを定義した。<br>
 ```
-cookie:{
+secret:process.env.SESSION_SECRET as string,
+  resave:false,
+  saveUninitialized:false,
+  store:MongoStore.create({
+    mongoUrl:process.env.MONGO_URI,
+    collectionName:"sessions"
+  }),
+  cookie:{
     maxAge:1000*60*60*24,//cookieの有効期限
     httpOnly:true,//jsからcookieにアクセスできないようにする、xss攻撃を防ぐ
     sameSite: 'lax'
