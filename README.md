@@ -105,10 +105,10 @@ apiClientはwithCredentials:trueと設定しているため、この時にブラ
 - cors・・フロントエンドとバックエンドの異なるポート番号通しの通信を許可するために使う。
   
 次に、app.tsでセッション管理のルールを定義した。以下のオプションを定義した。<br>
-| secret | resave | saveUninitialized | store | cookie |
-| ---- | ---- | ---- | ---- | ---- |
-| セッションIDを暗号化するための秘密鍵 |　セッションに変更がない場合でもリクエストのたびにセッションを再保存するかを決める | 新しく作成されたが、まだ何も変更されていないセッションを保存するかを決める | セッションデータの保存先を決める | ブラウザに保存されているCookie自体のルールを設定するためのオブジェクト |
-| セッションIDを暗号化するための秘密鍵 | false | false | connect-mongo | httpOnly:true<br>maxAge:24h<br>sameSite:"lax" |
+| | secret | resave | saveUninitialized | store | cookie |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+|　役割　| セッションIDを暗号化するための秘密鍵 |　セッションに変更がない場合でもリクエストのたびにセッションを再保存するかを決める | 新しく作成されたが、まだ何も変更されていないセッションを保存するかを決める | セッションデータの保存先を決める | ブラウザに保存されているCookie自体のルールを設定するためのオブジェクト |
+|オプション| セッションIDを暗号化するための秘密鍵 | false | false | connect-mongo | httpOnly:true<br>maxAge:24h<br>sameSite:"lax" |
 
 
 
