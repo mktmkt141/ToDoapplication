@@ -43,11 +43,8 @@
 ゴミ箱ボタンを押す。<br>
 <img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/7237ceb1-0aa5-4e90-bfb1-fb3e0d588681" />
 
-# タスクが消える
+タスクが消える
 <img width="1915" height="875" alt="Image" src="https://github.com/user-attachments/assets/6b22d9a0-f735-4855-82c1-2c84c6d75ab0" />
-
-
-fd496" />
 
 ## 主な機能
 
