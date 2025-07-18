@@ -124,7 +124,9 @@ secret:process.env.SESSION_SECRET as string,
 |役割| セッションIDを暗号化するための秘密鍵 |　セッションに変更がない場合でもリクエストのたびにセッションを再保存するかを決める | 新しく作成されたが、まだ何も変更されていないセッションを保存するかを決める | セッションデータの保存先を決める | ブラウザに保存されているCookie自体のルールを設定するためのオブジェクト |
 |オプション| セッションIDを暗号化するための秘密鍵 | false | false | connect-mongo | httpOnly:true<br>maxAge:24h<br>sameSite:"lax" |
 
-
+-httpOnly:true・・・JavaScriptからCookieへのアクセスを禁止する。XSS攻撃によるCookieの盗難を防ぐセキュリティ設定<br>
+-maxAge ・・・Cookieの有効期限を指定する。<br>
+-sameSite:"lax"・・・CSRFという攻撃を防ぐためのセキュリティ設定。"lax"というのはセキュリティと利便性のバランスが取れた標準的な設定で、ユーザーが他のサイトからリンクをクリックして遷移した場合など、安全な状況でのみCookieを創始するようにブラウザに指示するための設定。
 
 ---
 
