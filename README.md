@@ -38,6 +38,14 @@
 
 <img width="507" height="229" alt="Image" src="https://github.com/user-attachments/assets/af1d4c30-a1b7-4724-9459-79e4044499ee" />
 
+# ゴミ箱ボタンを押す。
+<img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/7237ceb1-0aa5-4e90-bfb1-fb3e0d588681" />
+# タスクが消える
+<img width="1915" height="875" alt="Image" src="https://github.com/user-attachments/assets/6b22d9a0-f735-4855-82c1-2c84c6d75ab0" />
+
+
+fd496" />
+
 ## 主な機能
 
 * **ユーザー認証**: 新規登録、ログイン、ログアウト機能。Cookieセッションによる状態管理。
