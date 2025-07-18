@@ -33,10 +33,10 @@
 <img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/cf1f968d-7c87-4a3c-b0be-209853384728" />
 
 * **タスクの編集**
-<img width="1892" height="869" alt="Image" src="https://github.com/user-attachments/assets/a250ad95-038c-4e91-85bf-9788ccd95821" />
-<img width="1917" height="867" alt="Image" src="https://github.com/user-attachments/assets/c0406e6b-f8a4-497d-8278-21fc58e59b32" />
-  
 * **タスクの削除**
+<img width="1892" height="869" alt="Image" src="https://github.com/user-attachments/assets/a250ad95-038c-4e91-85bf-9788ccd95821" />
+
+<img width="1917" height="867" alt="Image" src="https://github.com/user-attachments/assets/c0406e6b-f8a4-497d-8278-21fc58e59b32" />
 <img width="1915" height="875" alt="Image" src="https://github.com/user-attachments/assets/0df4d1d3-4e49-40cf-9086-71dbea2f699b" />
 
 ## 主な機能
