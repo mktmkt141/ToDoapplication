@@ -94,7 +94,7 @@ LoginPage.tsxで定義したhandleSubmit関数がloginUserアクションをdisp
 バックエンドの/loginルートがリクエストを処理する。メールアドレスでユーザーを検索し、この時にハッシュ化されたパスワードも一緒に取得する。User.tsに定義したcomparePasswordメソッドを使い、入力されたパスワードとデータベースのハッシュ化パスワードを安全に比較する。認証に成功したらreq.session.userId=user._idを実行し、セッションの作成を行う。express-sessionライブラリがこのセッションを一意に識別するためのセッションIDを作成し、Set-Cookieヘッダーに含めてフロントエンドに返信する。<br>
 ブラウザはSet-Cookieヘッダーを受け取り、セッションIDをCookieとして保存する。ReduxはloginUser.fulfilledの処理を実行し、サーバから返ってきたユーザー情報でuserのStateを更新する。<br>
 
-# タスクの追加・削除・編集
+## タスクの追加・削除・編集
 * **目標**
 ログインしているユーザーだけが自分自身のタスクを操作できるようにする。<br>
 HomePage.tsxで、ユーザーがタスクの追加、削除、編集を行うための設定を行う。handleAddTodo、handleDeleteなどの関数を使って、addTodoやdeleteTodoといったReduxのアクションをdispatchする。<br>
@@ -106,7 +106,7 @@ apiClientはwithCredentials:trueと設定しているため、この時にブラ
 削除、編集の処理においては、まずIDでタスクを検索し、次にそのタスクの所有者IDと今、リクエストを送ってきたユーザーのセッションIDが一致するかを検証する。これによって他人のタスクを操作できないように設定する。<br>
 最後に、各aysnc thunkのfullfilled処理が実行される。各Reduxストアのtodos配列が更新される。useSelectorがストアの変更を検知し、Reactが自動的に画面を再描画し、ユーザーに最新のリストを表示する。<br>
 
-# Cookieによるセッションの認証の流れ
+## Cookieによるセッションの認証の流れ
 * **サーバー側の設定**
 サーバー側の仕事は、**セッションの作成、管理、ブラウザにcookieを渡すこと**<br>
 これを実現するために、ライブラリをapp.tsで設定した。ミドルウェアとして、以下の四つを用意した。<br>
