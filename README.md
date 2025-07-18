@@ -69,6 +69,17 @@
 
 ---
 
+## 新規登録の流れ
+* **目標**
+新しいユーザーをデータベースに保存する<br>
+RegisterPage.tsxで、handlesubmit関数が呼ばれる。入力されたデータをReduxのregisterUserアクションをdispatch(実行依頼)する。<br>
+authSlice.ts
+
+
+
+
+---
+
 ## セットアップと起動方法
 
 1.  このリポジトリをクローンします。
