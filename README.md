@@ -73,8 +73,42 @@
 * **目標**
 新しいユーザーをデータベースに保存する<br>
 RegisterPage.tsxで、handlesubmit関数が呼ばれる。入力されたデータをReduxのregisterUserアクションをdispatch(実行依頼)する。<br>
-authSlice.ts
+authSlice.tsで、registerUserというasync thunkが実行される。次に、バックエンドの/api/users/registerのエンドポイントにPOSTリクエストを送る。<br>
+バックエンドのExpressサーバがリクエストを受け取り、/registerルートの処理を開始する。<br>新しいUserモデルのインスタンスを作成し、.save()メソッドが呼ばれる前にUser.tsのスキーマを定義するためのファイルで作ったpre-saveフックが作動して、入力されたパスワードを自動でハッシュ化する。ハッシュ化された安全なパスワードを含むユーザー情報がMONGO DBに保存される。<br>
 
+## ログインの流れ
+* **目標**
+ユーザーを認証し、その証明書(cookie)をブラウザに渡す。<br>
+LoginPage.tsxで定義したhandleSubmit関数がloginUserアクションをdispatchする。<br>次に、authSlice.tsファイルでloginUserというasync thunkがapiClientを使ってバックエンドの/api/users/loginにPOSTリクエストを送る。<br>
+バックエンドの/loginルートがリクエストを処理する。メールアドレスでユーザーを検索し、この時にハッシュ化されたパスワードも一緒に取得する。User.tsに定義したcomparePasswordメソッドを使い、入力されたパスワードとデータベースのハッシュ化パスワードを安全に比較する。認証に成功したらreq.session.userId=user._idを実行し、セッションの作成を行う。express-sessionライブラリがこのセッションを一意に識別するためのセッションIDを作成し、Set-Cookieヘッダーに含めてフロントエンドに返信する。<br>
+ブラウザはSet-Cookieヘッダーを受け取り、セッションIDをCookieとして保存する。ReduxはloginUser.fulfilledの処理を実行し、サーバから返ってきたユーザー情報でuserのStateを更新する。<br>
+
+# ##タスクの追加・削除・編集
+* **目標**
+ログインしているユーザーだけが自分自身のタスクを操作できるようにする。<br>
+HomePage.tsxで、ユーザーがタスクの追加、削除、編集を行うための設定を行う。handleAddTodo、handleDeleteなどの関数を使って、addTodoやdeleteTodoといったReduxのアクションをdispatchする。<br>
+次に、todoSlice.tsで各async thunkがapiClientを使ってバックエンドの/api/todosエンドポイントにリクエストを送る。(POST、delete、PUT)<br>
+apiClientはwithCredentials:trueと設定しているため、この時にブラウザに保存されているCookieが自動でリクエストに添付している。<br>
+バックエンドでは、expressサーバーがリクエストを受けとる。isAuthenticatedミドルウェアが作動して、リクエストに添付されたCookieからセッションIDを読み取り、有効なセッションが存在するか(ログインしているか)をチェックする。<br>
+認証に成功すると、ルート設定に進む。<br>
+追加の処理においては、新しいTodoを作成し、user:req.session.userIdで、今ログインしているユーザーと紐づける。<br>
+削除、編集の処理においては、まずIDでタスクを検索し、次にそのタスクの所有者IDと今、リクエストを送ってきたユーザーのセッションIDが一致するかを検証する。これによって他人のタスクを操作できないように設定する。<br>
+最後に、各aysnc thunkのfullfilled処理が実行される。各Reduxストアのtodos配列が更新される。useSelectorがストアの変更を検知し、Reactが自動的に画面を再描画し、ユーザーに最新のリストを表示する。<br>
+
+# ##Cookieによるセッションの認証の流れ
+* **サーバー側の設定**
+サーバー側の仕事は、**セッションの作成、管理、ブラウザにcookieを渡すこと**<br>
+これを実現するために、ライブラリをapp.tsで設定した。ミドルウェアとして、以下の四つを用意した。<br>
+- express-session・・セッション管理の中心。ユーザーごとにセッションデータを作成し、それを一意のIDと紐づける。
+- connect-mongo・・作成したセッションデータを、MONGODBに保存するための道具、これによってサーバーを再起動してもログイン状態を維持できる。
+- cookie-parser・・ブラウザから送られてきたCookieを、サーバーが読み取れるように手伝う。
+- cors・・フロントエンドとバックエンドの異なるポート番号通しの通信を許可するために使う。
+  
+次に、app.tsでセッション管理のルールを定義した。以下のオプションを定義した。<br>
+| secret | resave | saveUninitialized | store | cookie |
+| ---- | ---- |
+| セッションIDを暗号化するための秘密鍵 |　セッションに変更がない場合でもリクエストのたびにセッションを再保存するかを決める | 新しく作成されたが、まだ何も変更されていないセッションを保存するかを決める | セッションデータの保存先を決める | ブラウザに保存されているCookie自体のルールを設定するためのオブジェクト |
+| セッションIDを暗号化するための秘密鍵 | false | false | connect-mongo | httpOnly:true<br>maxAge:24h<br>sameSite:"lax" |
 
 
 
