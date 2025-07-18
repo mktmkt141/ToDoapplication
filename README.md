@@ -33,11 +33,11 @@
 <img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/cf1f968d-7c87-4a3c-b0be-209853384728" />
 
 * **タスクの編集**
-* **タスクの削除**
+# ペンマークボタンを押す<br>
 <img width="1888" height="863" alt="Image" src="https://github.com/user-attachments/assets/4804c86f-fb85-479e-83aa-08b0abb4aa4f" />
 
 <img width="507" height="229" alt="Image" src="https://github.com/user-attachments/assets/af1d4c30-a1b7-4724-9459-79e4044499ee" />
-
+* **タスクの削除**
 # ゴミ箱ボタンを押す。
 <img width="1919" height="856" alt="Image" src="https://github.com/user-attachments/assets/7237ceb1-0aa5-4e90-bfb1-fb3e0d588681" />
 
