@@ -213,3 +213,58 @@ JWTをlocalStorageに保存する場合、JavaScriptから完全にアクセス�
     * axios・・・フロントとバックで、HTTP通信を行うためのJavascript
 * **その他**:
     * Docker / Docker Compose ・・・アプリケーションのフロントエンド、バックエンド、データベースをコンテナで隔離してパッケージ化する。これにより同じ環境でコンテナを管理することが出来る。<br>
+
+---
+
+このプログラムはJavaScriptからTypeScriptへ移す形で実現しました。このサイトを参考にしました。[こちらのサイトを参考にしました](https://typescriptbook.jp/)<br>
+* **typescriptの特徴
+  jsの上位互換言語で、jsに静的な型付けが追加されている。tsで書かれたコードはjsにコンパイルされて、ブラウザ、サーバーなどjsを実行できる環境で動作する。
+* **静的型付け
+　変数や関数の引数に型を指定することでコードの安定性が向上し、コードが安定する。<br>
+* **型推論
+  変数に型注釈がついていなくてもコード上の文脈に基づいて、型を推論する。<br>
+* **構造的部分型システム
+  オブジェクトの形状(どのようなプロパティとメソッドを持つか)に基づいて型を判断する。
+* **ジェネリクスとは
+  型だけが異なる関数などがある場合に、型を引数にして(関数名<型名>)のように関数を呼び出す際に、型名を渡してあげる。
+* **高度な型表現
+  1.ユニオン型：複数の型のどれかを表すことが出来る。初期値がnullの変数を処理する際にユニオン型を利用することが出来る。
+  ```
+  type NullableString = string | null;
+  ```
+  2.タプル型：配列の各要素に異なる型を指定できる型のこと。異なる型の組み合わせを実現できる。
+  ```
+  type Response = [number, string];
+  const response: Response = [200, "OK"];
+  ```
+* **クラスとインターフェース
+  クラスとインターフェースの両方を実現する。<br>
+  ```
+  interface Person {
+  firstName: string;
+  lastName: string;
+   }
+    
+   class Employee implements Person {
+     firstName: string;
+     lastName: string;
+     constructor(firstName: string, lastName: string) {
+       this.firstName = firstName;
+       this.lastName = lastName;
+     }
+   }
+  ```
+* **tsもjsと同じくシングルモデルの言語
+  1つのスレッドで1つのタスクしか実行できない。実装しているタスクが重い場合、他のタスクを待たせることになる。長時間の処理、外部の処理(サーバーからのデータの処理)を待つ場合に非同期処理を実行する必要がある。<br>
+  同期処理・・複数のタスクを実行する際に上から一つずつ順番にタスクが実行される方式。<br>
+  非同期処理・・処理を一度バックグラウンドに移すことであるタスクを実行している最中でもその処理を停めることなく別のタスクを実行できる方式
+
+```
+export interface IUser extends Document{
+  name:string;
+  email:string;
+  password?:string;//select:falseなので、任意プロパティとして定義する
+  comparePassword:(candidatePassword:string)=>Promise<boolean>;//カスタムメソッドの型定義、Promise<boolean>で最終的にtrueかfalseになる非同期処理を返す関数であることを定義する
+}
+```
+このように
