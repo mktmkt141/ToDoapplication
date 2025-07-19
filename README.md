@@ -216,7 +216,7 @@ JWTをlocalStorageに保存する場合、JavaScriptから完全にアクセス�
 
 ---
 
-このプログラムはJavaScriptからTypeScriptへ移す形で実現しました。このサイトを参考にしました。[こちらのサイトを参考にしました](https://typescriptbook.jp/)<br>
+このプログラムはJavaScriptからTypeScriptへ移す形で実現しました。[こちらのサイトを参考にしました](https://typescriptbook.jp/)<br>
 * typescriptの特徴
   jsの上位互換言語で、jsに静的な型付けが追加されている。tsで書かれたコードはjsにコンパイルされて、ブラウザ、サーバーなどjsを実行できる環境で動作する。
 * 静的型付け
