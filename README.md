@@ -354,7 +354,7 @@ export interface IUser extends Document{
     アロー関数以外の関数とクラスのメソッドの第一引数にはthisを受け取ることが出来る。<br>
     thisとは自分自身を表すオブジェクトのこと。
     *関数の定義の仕方
-     *functionキーワードで始まる関数の宣言
+      * functionキーワードで始まる関数の宣言
       ```
       function add(a, b) {
         return a + b;
@@ -362,7 +362,10 @@ export interface IUser extends Document{
       
       console.log(add(2, 3)); // 5
       ```
-     *アロー関数
+      
+      * アロー関数
+ 
+    
       ```
       const add = (a, b) => {
         return a + b;
