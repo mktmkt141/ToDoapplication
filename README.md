@@ -171,7 +171,7 @@ secret:process.env.SESSION_SECRET as string,
 
 ##  各技術スタック採用の理由
 
-* vite・・・以前にcreate react appのビルドツールを採用した開発の経験があったため違うビルドツールを採用しました。<br>
+* vite・・・以前にcreate react appのビルドツールを採用した開発の経験があったため違うビルドツールを採用しました。モジュールバンドラーの中の一つで、複数のjsファイルを一つのファイルにするためのツール。複数のjsファイルに依存関係がある場合に、それをそのままブラウザに読み込ませようとすると、アプリケーションが壊れる可能性があるため慎重に行う必要がある。<br>
 * cookieによる認証・・・本アプリケーションでは、ユーザー認証にhttpOnly属性を持つCookieを利用したセッション管理方式を採用しました。以前の開発ではJWTをlocalStorageに保存する方式を採用しましたが、今回はセキュリティとシンプルさを重視し、以下の理由からCookieセッション方式を選択しました。
   
 
@@ -267,4 +267,106 @@ export interface IUser extends Document{
   comparePassword:(candidatePassword:string)=>Promise<boolean>;//カスタムメソッドの型定義、Promise<boolean>で最終的にtrueかfalseになる非同期処理を返す関数であることを定義する
 }
 ```
-このように
+* 静的型付け
+  pythonのような実行時に型が定まる動的型付け言語とは異なり、コンパイル時にが定まる。<br>
+  静的型付け言語では、型注釈を変数ごとに書いていく必要がある。
+
+---
+
+* TypeScriptを使ってみて
+  *変数に型を置くことで、自動補完やエラーの発見が見つけやすくなった。
+  *型アサーションというものを知った。
+  typescriptでは、型を自動で推論してくれる機能があるが、ユーザーがコンパイラに詳しく型を使えたい場合に、*as*を用いて型を具体的に伝えることが出来た。
+  ```
+  const value: string | number = "this is a string";
+  const strLength: number = (value as string).length;
+  ```
+  *.d.tsファイルについて
+  express-session.d.tsについて<br>
+  ```
+  import "express-session";
+   declare module "express-session"{
+     interface SessionData{
+       userId:string;
+     }
+   }
+  ```
+  このファイルのように、外部ライブラリの型定義に独自で設定したuserIdというプロパティの存在をtypescriptに伝えるためのファイル。<br>
+  express-sessionライブラリにはreq.sessionの型定義にuserIdの情報は含まれていない。そこで、このファイルで新たにuserIdを定義することを宣言した。<br>
+  express-sessionモジュールが定義しているSessionDataというインターフェースに新しいプロパティを追加した。<br>
+  *関数の型宣言も行った。
+  [このファイル](https://github.com/mktmkt141/ToDoapplication/blob/master/server/src/routes/todos.ts)の中にあるように、
+  ```
+  const getAllTodos:RequestHandler=async (req,res)=>{
+     try{
+       const todos=await Todo.find({user:req.session.userId}).sort({createdAt:-1});
+       res.json(todos);
+     }catch(err){
+       res.status(500).json({message:"サーバエラー"});
+     }
+  };
+  ```
+  getAllTodos関数にexpressライブラリが提供するルートハンドラ関数専用の型であるRequestHandlerを付ける。<br>
+  <br>
+  一方、関数の引数に直接型を付けることもした。<br>
+  ```
+  router.post("/register",async (req:Request,res:Response)=>{
+  try{
+    const {name,email,password}=req.body;
+    //バリデーション：必須項目が入力されているか
+    if(!name|| !email || !password){
+      res.status(400).json({message:"すべての項目を入力してください"});
+      return ;
+    }
+    .....
+  ```
+  このファイルではreqという引数にはExpressが提供するRequestという型を付ける。resという引数にはExpressが提供するResponseという型を付ける。<br>
+  *RequestHandlerを使う方法と、直接引数に書く方法の二つがある。*
+  * any型
+    ```
+    } catch (err: any) {
+     // ...
+    }
+    ```
+    このファイルの文にもあるように、catch文に入った時にエラーオブジェクトerrはどんな型を持っているのか分からないためany型(何でもありな型)として扱うことを宣言する。<br>
+    *補足*
+    ```
+    function hello(name) {
+        console.log(`Hello, ${name.toUpperCase()}`);
+    }
+       
+    hello(1);
+    ```
+    上のコードのようにname はany型として扱われるため実行時エラーをすり抜ける可能性がある。そこで、tsconfig.jsonで* noImplicitAny: true*を設定することでanyの実行時エラーのすり抜けを防止できる。<br>
+  * interfaceによる型の定義
+    ```
+    export interface IUser extends Document{
+     name:string;
+     email:string;
+     password?:string;//select:falseなので、任意プロパティとして定義する
+     comparePassword:(candidatePassword:string)=>Promise<boolean>;//カスタムメソッドの型定義、Promise<boolean>で最終的にtrueかfalseになる非同期処理を返す関数であることを定義する
+    }
+    ```
+    上のコードでは、extends DocumentでMongooseの基本的なプロパティ(_idや.save()メソッド)をIUser型が継承することを示す。
+  * ジェネリクスによるスキーマ定義
+    *const UserSchema = new Schema<IUser>({...})* の文において、<IUser>でジェネリクスという機能を使っている。ちなみに、IUserという型を付けている。
+  * this引数
+    アロー関数以外の関数とクラスのメソッドの第一引数にはthisを受け取ることが出来る。<br>
+    thisとは自分自身を表すオブジェクトのこと。
+    *関数の定義の仕方
+     *functionキーワードで始まる関数の宣言
+      ```
+      function add(a, b) {
+        return a + b;
+      }
+      
+      console.log(add(2, 3)); // 5
+      ```
+     *アロー関数
+      ```
+      const add = (a, b) => {
+        return a + b;
+      };
+      ```
+   
+    　
