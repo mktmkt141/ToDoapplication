@@ -329,7 +329,7 @@ export interface IUser extends Document{
     }
     ```
     このファイルの文にもあるように、catch文に入った時にエラーオブジェクトerrはどんな型を持っているのか分からないためany型(何でもありな型)として扱うことを宣言する。<br>
-    * 補足 *
+    *補足*
     ```
     function hello(name) {
         console.log(`Hello, ${name.toUpperCase()}`);
