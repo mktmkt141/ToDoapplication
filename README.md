@@ -353,7 +353,9 @@ export interface IUser extends Document{
   * this引数
     アロー関数以外の関数とクラスのメソッドの第一引数にはthisを受け取ることが出来る。<br>
     thisとは自分自身を表すオブジェクトのこと。
-    *関数の定義の仕方
+    
+    * 関数の定義の仕方
+    
       * functionキーワードで始まる関数の宣言
       ```
       function add(a, b) {
