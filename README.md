@@ -274,14 +274,14 @@ export interface IUser extends Document{
 ---
 
 * TypeScriptを使ってみて
-  *変数に型を置くことで、自動補完やエラーの発見が見つけやすくなった。
-  *型アサーションというものを知った。
+  * 変数に型を置くことで、自動補完やエラーの発見が見つけやすくなった。
+  * 型アサーションというものを知った。
   typescriptでは、型を自動で推論してくれる機能があるが、ユーザーがコンパイラに詳しく型を使えたい場合に、*as*を用いて型を具体的に伝えることが出来た。
   ```
   const value: string | number = "this is a string";
   const strLength: number = (value as string).length;
   ```
-  *.d.tsファイルについて
+  * .d.tsファイルについて
   express-session.d.tsについて<br>
   ```
   import "express-session";
@@ -294,7 +294,7 @@ export interface IUser extends Document{
   このファイルのように、外部ライブラリの型定義に独自で設定したuserIdというプロパティの存在をtypescriptに伝えるためのファイル。<br>
   express-sessionライブラリにはreq.sessionの型定義にuserIdの情報は含まれていない。そこで、このファイルで新たにuserIdを定義することを宣言した。<br>
   express-sessionモジュールが定義しているSessionDataというインターフェースに新しいプロパティを追加した。<br>
-  *関数の型宣言も行った。
+  * 関数の型宣言も行った。
   [このファイル](https://github.com/mktmkt141/ToDoapplication/blob/master/server/src/routes/todos.ts)の中にあるように、
   ```
   const getAllTodos:RequestHandler=async (req,res)=>{
@@ -329,7 +329,7 @@ export interface IUser extends Document{
     }
     ```
     このファイルの文にもあるように、catch文に入った時にエラーオブジェクトerrはどんな型を持っているのか分からないためany型(何でもありな型)として扱うことを宣言する。<br>
-    *補足*
+    * 補足 *
     ```
     function hello(name) {
         console.log(`Hello, ${name.toUpperCase()}`);
