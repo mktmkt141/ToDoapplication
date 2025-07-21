@@ -289,6 +289,7 @@ export interface IUser extends Document{
 ---
 
 ## TypeScriptを使ってみて
+
   * 変数に型を置くことで、自動補完やエラーの発見が見つけやすくなった。
   * 型アサーションというものを知った。
   typescriptでは、型を自動で推論してくれる機能があるが、ユーザーがコンパイラに詳しく型を使えたい場合に、*as*を用いて型を具体的に伝えることが出来た。
@@ -388,5 +389,16 @@ export interface IUser extends Document{
         return a + b;
       };
       ```
+      
+　　* FCコンポーネントについて 
+      ```
+      const App : FC
+      ```
+      のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnullなど)を返しているかをtypescriptがチェックしている。<br>
+   * フックに対して型を付けた
+     [このファイル](https://github.com/mktmkt141/ToDoapplication/blob/master/client/src/app/hooks.ts)で作成した二つのResuxのカスタムフックuseSelector、useDispatchに対して、
+     
+      
+   
    
     　
