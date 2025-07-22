@@ -389,7 +389,7 @@ export interface IUser extends Document{
         return a + b;
       };
       ```
-    * interfaceでオブジェクトの型の名前を付けた
+   * interfaceでオブジェクトの型の名前を付けた
         ```
         export interface User{
            _id:string;
@@ -398,7 +398,7 @@ export interface IUser extends Document{
         }
         ```
         のように、Userのデータの形を設定した。
-    * typeof演算子について
+   * typeof演算子について
         typeo演算子とは、変数から型を抽出するための演算子のこと。
         ```
          //ストア全体のstateの型をエクスポート
@@ -415,12 +415,12 @@ export interface IUser extends Document{
         ```
         この行のように、useAppSelectorフックスにRootStateを付けることでコンポーネントがストアからデータを取りだす際に型安全性を担保することができる。<br>
 
-    * ユーティリティ型(Omit)
+   * ユーティリティ型(Omit)
         ```
         Omit<User, '_id' | 'name'>
         ```
         omitは既存の型(User)から指定したプロパティ(_id,name)を取り除いた新しい型を作ることが出来る。<br>
-    * createAsyncThunkについて
+   * createAsyncThunkについて
         Redux ToolkitにおいてAPi通信のような非同期処理を簡単に扱うための機能。<br>
         createAsyncThunkは、API通信の際に発生する3つの状態（待機中、成功、失敗）を自動で管理し、それぞれに対応するアクションを発行してくれる。
         これを使うことで、コンポーネント内でローディング状態やエラー状態を自分で管理する手間が省け、コードが非常にクリーンになる。<br>
@@ -464,11 +464,11 @@ export interface IUser extends Document{
         createAsyncThunkによって、上の三つの状態を管理する必要があるが、これを全てコードで管理するとなるとコードが煩雑になる。
         
       
-   　* FCコンポーネントについて 
+   * FCコンポーネントについて
          ```
          const App : FC
          ```
-         のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnull          など)を返しているかをtypescriptがチェックしている。<br>
+     のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnull          など)を返しているかをtypescriptがチェックしている。<br>
       
      
       
