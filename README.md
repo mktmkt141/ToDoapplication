@@ -365,10 +365,10 @@ export interface IUser extends Document{
     ```
     上のコードでは、extends DocumentでMongooseの基本的なプロパティ(_idや.save()メソッド)をIUser型が継承することを示す。
   * ジェネリクスによるスキーマ定義
-    *const UserSchema = new Schema<IUser>({...})* の文において、<IUser>でジェネリクスという機能を使っている。ちなみに、IUserという型を付けている。
+  *const UserSchema = new Schema<IUser>({...})* の文において、<IUser>でジェネリクスという機能を使っている。ちなみに、IUserという型を付けている。
   * this引数
-    アロー関数以外の関数とクラスのメソッドの第一引数にはthisを受け取ることが出来る。<br>
-    thisとは自分自身を表すオブジェクトのこと。
+  アロー関数以外の関数とクラスのメソッドの第一引数にはthisを受け取ることが出来る。<br>
+  thisとは自分自身を表すオブジェクトのこと。
     
     * 関数の定義の仕方
     
@@ -398,7 +398,7 @@ export interface IUser extends Document{
         }
         ```
         のように、Userのデータの形を設定した。
-      * typeof演算子について
+    * typeof演算子について
         typeo演算子とは、変数から型を抽出するための演算子のこと。
         ```
          //ストア全体のstateの型をエクスポート
@@ -415,12 +415,12 @@ export interface IUser extends Document{
         ```
         この行のように、useAppSelectorフックスにRootStateを付けることでコンポーネントがストアからデータを取りだす際に型安全性を担保することができる。<br>
 
-      * ユーティリティ型(Omit)
+    * ユーティリティ型(Omit)
         ```
         Omit<User, '_id' | 'name'>
         ```
         omitは既存の型(User)から指定したプロパティ(_id,name)を取り除いた新しい型を作ることが出来る。<br>
-      * createAsyncThunkについて
+    * createAsyncThunkについて
         Redux ToolkitにおいてAPi通信のような非同期処理を簡単に扱うための機能。<br>
         createAsyncThunkは、API通信の際に発生する3つの状態（待機中、成功、失敗）を自動で管理し、それぞれに対応するアクションを発行してくれる。
         これを使うことで、コンポーネント内でローディング状態やエラー状態を自分で管理する手間が省け、コードが非常にクリーンになる。<br>
@@ -464,7 +464,7 @@ export interface IUser extends Document{
         createAsyncThunkによって、上の三つの状態を管理する必要があるが、これを全てコードで管理するとなるとコードが煩雑になる。
         
       
-   　　* FCコンポーネントについて 
+   　* FCコンポーネントについて 
          ```
          const App : FC
          ```
