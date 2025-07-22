@@ -465,9 +465,9 @@ export interface IUser extends Document{
         
       
    * FCコンポーネントについて
-         ```
-         const App : FC
-         ```
+      ```
+      const App : FC
+      ```
      のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnull          など)を返しているかをtypescriptがチェックしている。<br>
       
      
