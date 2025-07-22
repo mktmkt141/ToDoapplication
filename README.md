@@ -389,7 +389,7 @@ export interface IUser extends Document{
         return a + b;
       };
       ```
-      * interfaceでオブジェクトの型の名前を付けた
+    * interfaceでオブジェクトの型の名前を付けた
         ```
         export interface User{
            _id:string;
