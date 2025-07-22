@@ -389,14 +389,87 @@ export interface IUser extends Document{
         return a + b;
       };
       ```
+      * interfaceでオブジェクトの型の名前を付けた
+        ```
+        export interface User{
+           _id:string;
+           name:string;
+           email:string;
+        }
+        ```
+        のように、Userのデータの形を設定した。
+      * typeof演算子について
+        typeo演算子とは、変数から型を抽出するための演算子のこと。
+        ```
+         //ストア全体のstateの型をエクスポート
+         export type RootState = ReturnType<typeof store.getState>;
+         //dispatch関数の型をエクスポート
+         export type AppDispatch = typeof store.dispatch;
+        
+        ```
+        この行では、Reduxストアに保存されているすべてのStateの形を一つの型として定義している。<br>
+        また、AppDispatchを定義することでuseAppDispatchによって安全な型のdispatch関数を使えるようになる。<br>
+        つまり、二つの行によって、安全にストアのstateと、redux toolkitのdispatchを安全に使えるようになる。<br>
+        ```
+        export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+        ```
+        この行のように、useAppSelectorフックスにRootStateを付けることでコンポーネントがストアからデータを取りだす際に型安全性を担保することができる。<br>
+
+      * ユーティリティ型(Omit)
+        ```
+        Omit<User, '_id' | 'name'>
+        ```
+        omitは既存の型(User)から指定したプロパティ(_id,name)を取り除いた新しい型を作ることが出来る。<br>
+      * createAsyncThunkについて
+        Redux ToolkitにおいてAPi通信のような非同期処理を簡単に扱うための機能。<br>
+        createAsyncThunkは、API通信の際に発生する3つの状態（待機中、成功、失敗）を自動で管理し、それぞれに対応するアクションを発行してくれる。
+        これを使うことで、コンポーネント内でローディング状態やエラー状態を自分で管理する手間が省け、コードが非常にクリーンになる。<br>
+        ```
+        export const loginUser = createAsyncThunk(
+           // 第1引数：アクションの「名前」
+           'auth/login', 
+         
+           // 第2引数：実際に行う非同期処理
+           async (userData, { rejectWithValue }) => {
+             try {
+               const response = await apiClient.post('/users/login', userData);
+               return response.data; // 成功したら、この値が fulfilled の payload になる
+             } catch (error: any) {
+               return rejectWithValue(error.response.data); // 失敗したら、この値が rejected の payload になる
+             }
+           }
+         );
+        ```
+        このように第一引数にアクションの名前を、第二引数に非同期処理の内容を書く。これらの処理によってAPI通信を行い三種類のアクションを発行する。<br>
+        
+        次に、extraReducersと連携し、三つの状態をどう変更するかを定義する。
+        loginUser関数を参考にすると、
+        ```
+        //loginuserの状態別処理
+          .addCase(loginUser.pending,(state)=>{
+            state.status="loading";
+          })
+          .addCase(loginUser.fulfilled,(state,action)=>{
+            state.status="succeeded";
+            state.user=action.payload;
+          })
+          .addCase(loginUser.rejected,(state,action)=>{
+            state.status="failed";
+            state.error=(action.payload as {message:string}).message;
+          })
+        ```
+        * pending: 通信を開始した時。「待機中」
+        * fulfilled: 通信が成功した時。returnされたデータがpayloadに含まれます。
+        * rejected: 通信が失敗した時。rejectWithValueで返されたエラーがpayloadに含まれます。
+        createAsyncThunkによって、上の三つの状態を管理する必要があるが、これを全てコードで管理するとなるとコードが煩雑になる。
+        
       
-　　* FCコンポーネントについて 
-      ```
-      const App : FC
-      ```
-      のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnullなど)を返しているかをtypescriptがチェックしている。<br>
-   * フックに対して型を付けた
-     [このファイル](https://github.com/mktmkt141/ToDoapplication/blob/master/client/src/app/hooks.ts)で作成した二つのResuxのカスタムフックuseSelector、useDispatchに対して、
+   　　* FCコンポーネントについて 
+         ```
+         const App : FC
+         ```
+         のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnull          など)を返しているかをtypescriptがチェックしている。<br>
+      
      
       
    
