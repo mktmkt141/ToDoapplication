@@ -12,11 +12,12 @@
 5.[ログインの流れ](#ログインの流れ)<br>
 6.[タスクの追加・削除・編集](#タスクの追加削除編集)<br>
 7.[Cookieによるセッション認証の流れ](#cookieによるセッションの認証の流れ)<br>
-8.[セットアップと起動方法](#セットアップと起動方法)<br>
-9.[各技術スタック採用の理由](#各技術スタック採用の理由)<br>
-10.[各技術スタックの簡単な説明](#各技術スタックの簡単な説明)<br>
-11.[Typescriptについて](#typescriptの概要調べもの)<br>
-12.[Typescriptをつかってみて](#typescriptを使ってみて)<br>
+8.[リダイレクトまでの流れ]()<br>
+9.[セットアップと起動方法](#セットアップと起動方法)<br>
+10.[各技術スタック採用の理由](#各技術スタック採用の理由)<br>
+11.[各技術スタックの簡単な説明](#各技術スタックの簡単な説明)<br>
+12.[Typescriptについて](#typescriptの概要調べもの)<br>
+13.[Typescriptをつかってみて](#typescriptを使ってみて)<br>
 
 ---
 
@@ -152,6 +153,74 @@ secret:process.env.SESSION_SECRET as string,
 -sameSite:"lax"・・・CSRFという攻撃を防ぐためのセキュリティ設定。"lax"というのはセキュリティと利便性のバランスが取れた標準的な設定で、ユーザーが他のサイトからリンクをクリックして遷移した場合など、安全な状況でのみCookieを創始するようにブラウザに指示するための設定。
 
 ---
+
+## リダイレクトまでの流れ
+App.tsxの中にあるuseEffectの中でdispatch(fetchCurrentUser())が実行される。fetchCurrentUserはバックエンドの/api/users/meというエンドポイントにGETリクエストを送る。この時にブラウザが保存されているCookieをリクエストに添付する。バックエンドは受け取った、Cookieを検証し、有効なセッションが存在するかをチェックする。<br>
+```
+// src/features/auth/authSlice.ts
+
+// ... (他のimport文やinterface定義) ...
+
+// 自分の情報を取得するための非同期処理を追加する
+export const fetchCurrentUser = createAsyncThunk<User>(
+  "auth/fetchCurrentUser", // アクションの名前
+  async (_, { rejectWithValue }) => {
+    try {
+      // ★★★ ここでAPIを呼び出している ★★★
+      const response = await apiClient.get("/users/me");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// ... (他のcreateAsyncThunkやcreateSliceの定義) ...
+```
+認証成功なら、Reduxストアのuserの状態が更新され、アプリケーションはログイン済みの状態になる。認証失敗ならProtectedRouteによってログインページに遷移する。<br>
+```
+import React, { FC, ReactNode, useEffect } from 'react';
+import { useAppSelector } from '../app/hooks';
+import { useNavigate } from 'react-router-dom';
+
+// MUIコンポーネントをインポート
+import { Box, CircularProgress } from '@mui/material';
+
+// propsの型を定義
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
+  // Reduxストアからユーザー情報と認証ステータスを取得
+  const { user, status } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 最初の認証チェックが完了し（'loading'ではなくなり）、
+    // かつユーザーが存在しない場合にリダイレクトを実行する
+    if (status !== 'loading' && !user) {
+      navigate('/login');
+    }
+  }, [user, status, navigate]); // userかstatusが変わるたびに、このチェックを実行
+
+  // 認証チェックが完了していて、ユーザーが存在する場合のみ、子コンポーネントを表示
+  if (status === 'succeeded' && user) {
+    return <>{children}</>;
+  }
+
+  // それ以外の場合（ローディング中、またはリダイレクト待ち）は、
+  // ローディングスピナーを表示してユーザーに待機中であることを示す
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <CircularProgress />
+    </Box>
+  );
+};
+
+export default ProtectedRoute;
+
+```
 
 ## セットアップと起動方法
 
@@ -469,3 +538,6 @@ export interface IUser extends Document{
       const App : FC
       ```
      のような記述をした。これは、Appという関数はFC(Function Component)という型をもつことを宣言している。FCをつけることで、Appがreact コンポーネントであることを宣言し、コンポーネントがreactが画面に正しく画面に表示できるもの(jsxやnull          など)を返しているかをtypescriptがチェックしている。<br>
+
+   * chiledren、ReactNodeとは
+     childrenとはコンポーネントの中身で、ReactNodeはその中身の型のこと。childrenプロパティのために用意した柔軟な型のことでReactが画面に表示できるすべてを表現できる。childrenプロパティの型をReactNodeにすることでタイプスクリプトに対してReactが表現できるものなら何でも入ることを宣言する。
